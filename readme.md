@@ -1,4 +1,4 @@
-# GCP Commands
+## GCP Commands
 
 ```
 gcloud init
@@ -17,3 +17,9 @@ gcloud services enable compute.googleapis.com
 
 List Enabled APIs 
 gcloud services list --enabled --project csye6225-414117
+
+## Deleting terraform resources in a module
+
+```
+terraform destroy -target=module.vpc
+```

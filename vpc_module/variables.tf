@@ -28,6 +28,12 @@ variable "auto_create_subnetworks" {
   default     = false
 }
 
+variable "delete_default_routes_on_create" {
+  description = "Whether to delete the default route on create"
+  type        = bool
+  default     = true
+}
+
 variable "webapp_subnet_name" {
   description = "The name of the subnet"
   type        = string

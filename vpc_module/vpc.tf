@@ -2,6 +2,7 @@ resource "google_compute_network" "vpc_network" {
   name                    = var.vpc_name
   auto_create_subnetworks = var.auto_create_subnetworks
   routing_mode            = var.routing_mode
+  delete_default_routes_on_create = var.delete_default_routes_on_create
 }
 
 resource "google_compute_subnetwork" "webapp_subnet" {
@@ -24,5 +25,5 @@ resource "google_compute_route" "webapp_route" {
   network     = google_compute_network.vpc_network.self_link
   next_hop_gateway = var.next_hop_gateway
   priority    = 1000
-  depends_on = [google_compute_subnetwork.webapp_subnet]
+  tags = ["webapp"] 
 }
