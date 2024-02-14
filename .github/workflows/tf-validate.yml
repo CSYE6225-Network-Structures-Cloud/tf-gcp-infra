@@ -1,24 +1,29 @@
-name: Terraform Validate
+name: 'Terraform Validate'
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  validate:
+  terraform:
+    name: 'Terraform'
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: 'Checkout'
+        uses: actions/checkout@v2
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      - name: 'Setup Terraform'
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.14.0
 
-    - name: Terraform Initialize
-      run: terraform init
+      - name: 'Terraform Init'
+        run: terraform init
 
-    - name: Terraform Validate
-      run: terraform validate
+      - name: 'Terraform Validate'
+        run: terraform validate
