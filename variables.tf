@@ -19,7 +19,7 @@ variable "zone" {
 variable "boot_image" {
   description = "Name of the image"
   type        = string
-  default     = "flask-app-image-pr-15-latest"
+  default     = "flask-app-image-latest"
 }
 
 variable "boot_disk_size" {
@@ -31,7 +31,7 @@ variable "boot_disk_size" {
 variable "boot_disk_type" {
   description = "Type of the boot disk"
   type        = string
-  default     = "pd-standard"
+  default     = "pd-balanced"
 }
 
 variable "network" {
