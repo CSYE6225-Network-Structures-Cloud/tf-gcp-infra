@@ -19,7 +19,7 @@ variable "zone" {
 variable "boot_image" {
   description = "Name of the image"
   type        = string
-  default     = "flask-app-image-latest"
+  default     = "flask-app"
 }
 
 variable "boot_disk_size" {
@@ -137,4 +137,10 @@ variable "webapp_dest_range" {
   description = "The destination range of the route"
   type        = string
   default     = "0.0.0.0/0"
+}
+
+variable "packer_ssh_username" {
+  description = "The username for the packer image"
+  type        = string
+  default     = "packer"
 }

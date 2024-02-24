@@ -16,6 +16,7 @@ gcloud config set project csye6225-414117
 Enable compute API
 ```
 gcloud services enable compute.googleapis.com
+gcloud services enable sqladmin.googleapis.com
 ```
 
 List Enabled APIs 
