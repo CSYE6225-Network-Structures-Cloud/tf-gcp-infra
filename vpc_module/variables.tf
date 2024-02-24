@@ -34,6 +34,13 @@ variable "delete_default_routes_on_create" {
   default     = true
 }
 
+
+variable "private_ip_google_access" {
+  description = "Whether to allow VMs with only private IP addresses to access Google API's"
+  type        = bool
+  default     = true
+}
+
 variable "webapp_subnet_name" {
   description = "The name of the subnet"
   type        = string
