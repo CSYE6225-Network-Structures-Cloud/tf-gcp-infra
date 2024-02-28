@@ -22,31 +22,6 @@ module "vpc" {
   next_hop_gateway = var.next_hop_gateway
 }
 
-resource "google_compute_firewall" "allow_http" {
-  name    = "allow-firewall"
-  network = module.vpc.network_self_link
-  project = var.project_id
-  allow {
-    protocol = "tcp"
-    ports    = ["8080"]
-  }
-
-  source_ranges = ["0.0.0.0/0"]
-  target_tags = ["webapp"]
-}
-
-resource "google_compute_firewall" "deny_ssh_rule" {
-  name    = "block-firewall"
-  network = module.vpc.network_self_link
-  project = var.project_id 
-  allow {
-    protocol = "tcp"
-    ports    = ["22"]
-  }
-
-  target_tags = ["webapp"]
-  source_ranges = ["0.0.0.0/0"]
-}
 
 resource "google_compute_instance" "default" {
   name         = var.machine_name
@@ -71,15 +46,60 @@ resource "google_compute_instance" "default" {
   }
     metadata_startup_script = <<EOF
     #!/bin/bash
-    touch /home/packer/instance-started.txt
+    touch ${local.env_file_path}
     echo "DB_HOST=${local.db_host}" >> ${local.env_file_path}
     echo "DB_PORT=5432" >> ${local.env_file_path}
     echo "DB_NAME=${var.db_name}" >> ${local.env_file_path}
     echo "DB_USER=${var.db_user}" >> ${local.env_file_path}
     echo "DB_PASSWORD=${random_password.password.result}" >> ${local.env_file_path}
+    sudo chown csye6225:csye6225 /home/packer/flaskapp.env
+    sudo chmod 644 /home/packer/flaskapp.env
+    sudo systemctl daemon-reload
     sudo systemctl start flaskapp
-    sudo systemctl status flaskapp
     EOF
 }
 
 
+# ### Test Instance without network tag
+# resource "google_compute_instance" "test_instance" {
+#   name         = "test-instance"
+#   machine_type = var.machine_type
+#   project      = var.project_id
+#   zone         = var.zone
+#   boot_disk {
+#     auto_delete = var.auto_delete_boot_disk
+#     initialize_params {
+#       image = var.boot_image
+#       size  = var.boot_disk_size
+#       type  = var.boot_disk_type
+#     }
+#   }
+#   network_interface {
+#     network = module.vpc.network_self_link
+#     subnetwork = module.vpc.subnet_self_link
+#     access_config {
+#       network_tier = var.network_tier
+#     }
+#   }
+#     metadata_startup_script = <<EOF
+#     #!/bin/bash
+#     touch ${local.env_file_path}
+#     echo "DB_HOST=${local.db_host}" >> ${local.env_file_path}
+#     echo "DB_PORT=5432" >> ${local.env_file_path}
+#     echo "DB_NAME=${var.db_name}" >> ${local.env_file_path}
+#     echo "DB_USER=${var.db_user}" >> ${local.env_file_path}
+#     echo "DB_PASSWORD=${random_password.password.result}" >> ${local.env_file_path}
+#     sudo chown csye6225:csye6225 /home/packer/flaskapp.env
+#     sudo chmod 644 /home/packer/flaskapp.env
+#     sudo systemctl daemon-reload
+#     sudo systemctl start flaskapp
+#     EOF
+# }
+
+output "instance_external_ip" {
+  value = google_compute_instance.default.network_interface[0].access_config[0].nat_ip
+}
+
+output "test_instance_external_ip" {
+  value = google_compute_instance.test_instance.network_interface[0].access_config[0].nat_ip
+}

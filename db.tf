@@ -53,8 +53,6 @@ variable "db_user" {
 }
 
 
-
-
 resource "google_compute_global_address" "private_ip_address" {
   project = var.project_id
   name          = "private-ip-address"
@@ -72,13 +70,17 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 }
 
 
+# locals {
+#   webapp_ip = google_compute_instance.default.network_interface.0.access_config.0.assigned_nat_ip
+# }
+
+
 resource "google_sql_database_instance" "instance" {
   name                = "private-instance"
   region              = var.region
   database_version    = var.database_version
   deletion_protection = var.deletion_protection_db
   project             = var.project_id  
-
   depends_on = [ google_service_networking_connection.private_vpc_connection ]
   settings {
     tier              = var.tier_db
@@ -88,7 +90,10 @@ resource "google_sql_database_instance" "instance" {
     ip_configuration {
       ipv4_enabled                                  = var.ipv4_enabled_db
       private_network                               = module.vpc.network_self_link
-      
+      # authorized_networks {
+      #   name = "private-ip-address"
+      #   value = "35.209.255.148"
+      # }
     }
   }
 }
