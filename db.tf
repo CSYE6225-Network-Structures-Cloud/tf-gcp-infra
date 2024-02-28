@@ -113,7 +113,7 @@ resource "google_sql_user" "user" {
   project = var.project_id
   name     = var.db_user
   instance = google_sql_database_instance.instance.name
-  password = resource.random_password.password.result
+  password = random_password.password.result
 }
 
 
