@@ -19,7 +19,7 @@ variable "zone" {
 variable "boot_image" {
   description = "Name of the image"
   type        = string
-  default     = "flask-app"
+  default     = "flask-app-image-latest"
 }
 
 variable "boot_disk_size" {
@@ -143,4 +143,16 @@ variable "packer_ssh_username" {
   description = "The username for the packer image"
   type        = string
   default     = "packer"
+}
+
+variable "allowed_ingress_ports" {
+  description = "The allowed ingress ports"
+  type        = list(string)
+  default     = ["8080"]
+}
+
+variable "allowed_egress_protocol" {
+  description = "The allowed egress protocol"
+  type        = string
+  default     = "all"
 }
