@@ -106,7 +106,7 @@ resource "google_sql_database" "database" {
 
 resource random_password "password" {
   length  = 16
-  special = true
+  special = false
 }
 
 resource "google_sql_user" "user" {

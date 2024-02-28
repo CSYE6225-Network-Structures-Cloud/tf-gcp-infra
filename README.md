@@ -21,3 +21,5 @@ gcloud services enable sqladmin.googleapis.com
 
 List Enabled APIs 
 gcloud services list --enabled --project csye6225-414117
+
+terraform apply -var 'region=us-east1' -var 'vpc_name=app-vpc-demo' -var 'zone=us-east1-a'
