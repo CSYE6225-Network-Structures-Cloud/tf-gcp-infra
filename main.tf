@@ -55,10 +55,13 @@ resource "google_compute_instance" "default" {
     sudo chown csye6225:csye6225 /home/packer/flaskapp.env
     sudo chmod 644 /home/packer/flaskapp.env
     sudo systemctl daemon-reload
-    sudo systemctl start flaskapp
+    sudo systemctl restart flaskapp
     EOF
 }
 
+output "instance_external_ip" {
+  value = google_compute_instance.default.network_interface[0].access_config[0].nat_ip
+}
 
 # ### Test Instance without network tag
 # resource "google_compute_instance" "test_instance" {
@@ -92,14 +95,12 @@ resource "google_compute_instance" "default" {
 #     sudo chown csye6225:csye6225 /home/packer/flaskapp.env
 #     sudo chmod 644 /home/packer/flaskapp.env
 #     sudo systemctl daemon-reload
-#     sudo systemctl start flaskapp
+#     # sudo systemctl start flaskapp
 #     EOF
 # }
 
-output "instance_external_ip" {
-  value = google_compute_instance.default.network_interface[0].access_config[0].nat_ip
-}
 
-output "test_instance_external_ip" {
-  value = google_compute_instance.test_instance.network_interface[0].access_config[0].nat_ip
-}
+
+# output "test_instance_external_ip" {
+#   value = google_compute_instance.test_instance.network_interface[0].access_config[0].nat_ip
+# }

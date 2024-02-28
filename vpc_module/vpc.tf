@@ -26,28 +26,7 @@ resource "google_compute_route" "webapp_route" {
   network     = google_compute_network.vpc_network.self_link
   next_hop_gateway = var.next_hop_gateway
   priority    = 1000
-  tags = ["webapp"] 
+  # tags = ["webapp"] 
 }
 
 
-# resource "google_compute_global_address" "default" {
-#   provider     = google-beta
-#   project      = google_compute_network.network.project
-#   name         = "global-psconnect-ip"
-#   address_type = "INTERNAL"
-#   purpose      = "PRIVATE_SERVICE_CONNECT"
-#   network      = google_compute_network.vpc_network.id
-#   address      = "10.3.0.5"
-# }
-# # [END compute_internal_ip_private_access]
-
-# # [START compute_forwarding_rule_private_access]
-# resource "google_compute_global_forwarding_rule" "default" {
-#   provider              = google-beta
-#   project               = google_compute_network.network.project
-#   name                  = "globalrule"
-#   target                = "all-apis"
-#   network               = google_compute_network.network.id
-#   ip_address            = google_compute_global_address.default.id
-#   load_balancing_scheme = ""
-# }

@@ -54,5 +54,5 @@ resource "google_compute_firewall" "deny_db_access" {
     protocol = "tcp"
     ports    = ["5432"]
   }
-  destination_ranges = [google_compute_global_address.private_ip_address.address]
+  destination_ranges = ["0.0.0.0/0"]
 }
