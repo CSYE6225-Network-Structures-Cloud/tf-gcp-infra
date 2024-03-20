@@ -186,3 +186,9 @@ variable "scopes" {
   type        = list(string)
   default     = ["https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/logging.admin"]
 }
+
+variable "log_file_path" {
+  description = "The path of the log file"
+  type        = string
+  default     = "/var/log/my-app/record.log"
+}
