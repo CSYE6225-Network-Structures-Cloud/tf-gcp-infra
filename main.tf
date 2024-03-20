@@ -83,6 +83,7 @@ resource "google_compute_instance" "default" {
     echo "DB_NAME=${var.db_name}" >> ${local.env_file_path}
     echo "DB_USER=${var.db_user}" >> ${local.env_file_path}
     echo "DB_PASSWORD=${random_password.password.result}" >> ${local.env_file_path}
+    echo "LOG_FILE_PATH=${var.log_file_path}" >> ${local.env_file_path}
     sudo chown csye6225:csye6225 /home/packer/flaskapp.env
     sudo chmod 644 /home/packer/flaskapp.env
     sudo systemctl daemon-reload
