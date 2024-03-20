@@ -22,12 +22,43 @@ module "vpc" {
   next_hop_gateway = var.next_hop_gateway
 }
 
+######################################################Service Account##########################################################################
+resource "google_service_account" "service_account" {
+  account_id   = var.service_account_id
+  display_name = var.service_account_name
+  project      = var.project_id
+}
 
+resource "google_project_iam_binding" "logging_admin" {
+  project = var.project_id
+  role    = "roles/logging.admin"
+
+  members = [
+   "serviceAccount:${google_service_account.service_account.email}"
+  ]
+}
+
+resource "google_project_iam_binding" "monitoring_metric_writer" {
+  project = var.project_id
+  role    = "roles/monitoring.metricWriter"
+
+  members = [
+    "serviceAccount:${google_service_account.service_account.email}"
+  ]
+}
+
+###############################################################Compute Instance##################################################################
 resource "google_compute_instance" "default" {
   name         = var.machine_name
   machine_type = var.machine_type
   project      = var.project_id
   zone         = var.zone
+
+  service_account {
+    email  = google_service_account.service_account.email
+    scopes = var.scopes
+  }
+
   tags = ["webapp"]
   boot_disk {
     auto_delete = var.auto_delete_boot_disk
@@ -61,4 +92,14 @@ resource "google_compute_instance" "default" {
 
 output "instance_external_ip" {
   value = google_compute_instance.default.network_interface[0].access_config[0].nat_ip
+}
+
+resource "google_dns_record_set" "webapp" {
+  name = var.domain_name
+  type = "A"
+  ttl  = 300
+  managed_zone = var.managed_zone_name
+  rrdatas = [google_compute_instance.default.network_interface.0.access_config.0.nat_ip]
+  project  = var.project_id
+  depends_on = [ google_compute_instance.default ]
 }

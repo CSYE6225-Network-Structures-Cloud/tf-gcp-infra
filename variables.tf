@@ -19,7 +19,7 @@ variable "zone" {
 variable "boot_image" {
   description = "Name of the image"
   type        = string
-  default     = "flask-app-image-latest"
+  default     = "flask-app-assignment6" 
 }
 
 variable "boot_disk_size" {
@@ -37,7 +37,7 @@ variable "boot_disk_type" {
 variable "network" {
   description = "Name of the network"
   type        = string
-  default     = "app-vpc"
+  default     = "app-vpc-assignment6"
 }
 
 variable "gce_subnet" {
@@ -155,4 +155,34 @@ variable "allowed_egress_protocol" {
   description = "The allowed egress protocol"
   type        = string
   default     = "all"
+}
+
+variable "domain_name" {
+  description = "The domain name"
+  type        = string
+  default     = "snehilaryan32.store."
+}
+
+variable "managed_zone_name" {
+  description = "The name of the managed zone"
+  type        = string
+  default     = "myzone"
+}
+
+variable "service_account_id" {
+  description = "The id of the service account"
+  type        = string
+  default     = "service-account-id"
+}
+
+variable "service_account_name" {
+  description = "The name of the service account"
+  type        = string
+  default     = "service-account"
+}
+
+variable "scopes" {
+  description = "The scopes for the service account"
+  type        = list(string)
+  default     = ["https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/logging.admin"]
 }
