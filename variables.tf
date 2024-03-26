@@ -19,7 +19,7 @@ variable "zone" {
 variable "boot_image" {
   description = "Name of the image"
   type        = string
-  default     = "flask-app-assignment6" 
+  default     = "flask-app" 
 }
 
 variable "boot_disk_size" {
@@ -37,7 +37,7 @@ variable "boot_disk_type" {
 variable "network" {
   description = "Name of the network"
   type        = string
-  default     = "app-vpc-assignment6"
+  default     = "app-vpc-assignment7"
 }
 
 variable "gce_subnet" {
@@ -74,7 +74,7 @@ variable "region" {
 variable "vpc_name" {
   description = "The name of the VPC"
   type        = string
-  default     = "app-vpc"
+  default     = "app-vpc-latest"
 }
 
 variable "routing_mode" {
@@ -172,23 +172,28 @@ variable "managed_zone_name" {
 variable "service_account_id" {
   description = "The id of the service account"
   type        = string
-  default     = "service-account-id"
+  default     = "service-account-webapp-id"
 }
 
 variable "service_account_name" {
   description = "The name of the service account"
   type        = string
-  default     = "service-account"
+  default     = "service-account-webapp"
 }
 
 variable "scopes" {
   description = "The scopes for the service account"
   type        = list(string)
-  default     = ["https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/logging.admin"]
+  default     = ["https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/logging.admin", "https://www.googleapis.com/auth/pubsub.publisher"]
 }
 
 variable "log_file_path" {
   description = "The path of the log file"
   type        = string
   default     = "/var/log/my-app/record.log"
+}
+
+variable "allow_webapp_stop_for_update" {
+  type = bool
+  default = true
 }

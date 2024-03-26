@@ -47,12 +47,22 @@ resource "google_project_iam_binding" "monitoring_metric_writer" {
   ]
 }
 
+resource "google_project_iam_binding" "pubsub_publisher" {
+  project = var.project_id
+  role    = "roles/pubsub.publisher"
+
+  members = [
+    "serviceAccount:${google_service_account.service_account.email}"
+  ]
+}
+
 ###############################################################Compute Instance##################################################################
 resource "google_compute_instance" "default" {
   name         = var.machine_name
   machine_type = var.machine_type
   project      = var.project_id
   zone         = var.zone
+  allow_stopping_for_update = var.allow_webapp_stop_for_update
 
   service_account {
     email  = google_service_account.service_account.email

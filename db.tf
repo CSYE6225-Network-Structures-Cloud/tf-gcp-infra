@@ -1,3 +1,11 @@
+variable "db_instance_name" {
+  description = "The name of the database instance"
+  type        = string
+  default     = "webapp-db"
+}
+
+
+
 variable "database_version" {
   description = "The database version to use"
   type        = string
@@ -52,10 +60,16 @@ variable "db_user" {
   default     = "webapp"  
 }
 
+variable "private_ip_address_name" {
+  description = "The name of the private IP address"
+  type        = string
+  default     = "private-ip"
+}
+
 
 resource "google_compute_global_address" "private_ip_address" {
   project = var.project_id
-  name          = "private-ip-address"
+  name          = var.private_ip_address_name
   purpose       = "VPC_PEERING"
   address_type  = "INTERNAL"
   network       = module.vpc.network_self_link
@@ -76,7 +90,7 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 
 
 resource "google_sql_database_instance" "instance" {
-  name                = "private-instance"
+  name                = var.db_instance_name
   region              = var.region
   database_version    = var.database_version
   deletion_protection = var.deletion_protection_db
