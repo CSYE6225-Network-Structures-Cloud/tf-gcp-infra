@@ -103,7 +103,24 @@ resource "google_project_iam_binding" "cloud_run_invoker" {
    "serviceAccount:${google_service_account.service_account_cf.email}"
   ]
 }
+
+resource "google_project_iam_binding" "cloud_sql_client" {
+  project = var.project_id
+  role    = "roles/cloudsql.client"
+
+  members = [
+    "serviceAccount:${google_service_account.service_account_cf.email}"
+  ]
+}
 ####################################Cloud Function############################################################
+resource "google_vpc_access_connector" "vpc_connector" {
+  name          = "verify-vpc-connector"
+  region        = var.region
+  project       = var.project_id
+  network       = module.vpc.network_self_link
+  ip_cidr_range = "10.0.7.0/28"
+}
+
 resource "google_cloudfunctions2_function" "function" {
   name                  = var.function_name
   project               = var.project_id
@@ -124,12 +141,21 @@ resource "google_cloudfunctions2_function" "function" {
     pubsub_topic = google_pubsub_topic.verify_topic.id
 
   }
-
   service_config {
-    max_instance_count  = var.max_instance_count
-    available_memory    = var.available_memory
-    timeout_seconds     = var.timeout_seconds
+    max_instance_count    = var.max_instance_count
+    available_memory      = var.available_memory
+    timeout_seconds       = var.timeout_seconds
     service_account_email = google_service_account.service_account_cf.email
+    vpc_connector         = google_vpc_access_connector.vpc_connector.name
+
+    environment_variables = {
+      DB_HOST = google_sql_database_instance.instance.private_ip_address
+      DB_PORT= 5432
+      DB_NAME=var.db_name
+      DB_USER=var.db_user
+      DB_PASSWORD=random_password.password.result
+      domain_name=var.domain_name
+    }
   }
 
 }

@@ -50,7 +50,6 @@ resource "google_project_iam_binding" "monitoring_metric_writer" {
 resource "google_project_iam_binding" "pubsub_publisher" {
   project = var.project_id
   role    = "roles/pubsub.publisher"
-
   members = [
     "serviceAccount:${google_service_account.service_account.email}"
   ]
@@ -94,6 +93,9 @@ resource "google_compute_instance" "default" {
     echo "DB_USER=${var.db_user}" >> ${local.env_file_path}
     echo "DB_PASSWORD=${random_password.password.result}" >> ${local.env_file_path}
     echo "LOG_FILE_PATH=${var.log_file_path}" >> ${local.env_file_path}
+    echo "PROJECT_ID=${var.project_id}" >> ${local.env_file_path}
+    echo "PUBSUB_TOPIC_ID=${var.pubsub_topic_name}" >> ${local.env_file_path}
+    echo "ENVIRONMENT=${var.app_env}" >> ${local.env_file_path}
     sudo chown csye6225:csye6225 /home/packer/flaskapp.env
     sudo chmod 644 /home/packer/flaskapp.env
     sudo systemctl daemon-reload

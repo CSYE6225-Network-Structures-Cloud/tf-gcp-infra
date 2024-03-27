@@ -50,7 +50,7 @@ resource "google_compute_firewall" "deny_db_access" {
   project  = var.project_id
   direction = "EGRESS"
 
-  deny {
+  allow {
     protocol = "tcp"
     ports    = ["5432"]
   }
