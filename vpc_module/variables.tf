@@ -63,7 +63,7 @@ variable "webapp_cidr_range" {
 variable "db_cidr_range" {
   description = "The IP CIDR range of the subnet"
   type        = string
-  default     = "10.0.2.0/24"
+  default     = "10.0.2.0/24" 
 }
 
 variable "webapp_route_name" {

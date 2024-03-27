@@ -184,7 +184,7 @@ variable "service_account_name" {
 variable "scopes" {
   description = "The scopes for the service account"
   type        = list(string)
-  default     = ["https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/logging.admin", "https://www.googleapis.com/auth/pubsub.publisher"]
+  default     = ["https://www.googleapis.com/auth/monitoring.write", "https://www.googleapis.com/auth/logging.admin", "https://www.googleapis.com/auth/pubsub"]
 }
 
 variable "log_file_path" {
@@ -196,4 +196,10 @@ variable "log_file_path" {
 variable "allow_webapp_stop_for_update" {
   type = bool
   default = true
+}
+
+variable "app_env" {
+  description = "The environment of the app"
+  type        = string
+  default     = "production"
 }
