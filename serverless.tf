@@ -147,7 +147,7 @@ resource "google_cloudfunctions2_function" "function" {
     timeout_seconds       = var.timeout_seconds
     service_account_email = google_service_account.service_account_cf.email
     vpc_connector         = google_vpc_access_connector.vpc_connector.name
-
+    # vpc_connector_egress_settings = "ALL_TRAFFIC"
     environment_variables = {
       DB_HOST = google_sql_database_instance.instance.private_ip_address
       DB_PORT= 5432
