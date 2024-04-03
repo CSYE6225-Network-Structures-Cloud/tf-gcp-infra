@@ -68,7 +68,7 @@ variable "private_ip_address_name" {
 variable "max_connections" {
   description = "The maximum number of connections"
   type        = number
-  default     = 100
+  default     = 200
 }
 
 

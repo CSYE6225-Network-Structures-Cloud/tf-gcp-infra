@@ -10,7 +10,7 @@ variable "timeout_sec" {
 
 variable "check_interval_sec" {
   description = "The check interval in seconds"
-  default     = 5
+  default     = 30
 }
 
 variable "healthy_threshold" {
@@ -137,14 +137,28 @@ variable "min_replicas" {
 
 variable "max_replicas" {
     description = "The maximum number of replicas"
-    default     = 3
+    default     = 6
 }
 
 variable "cpu_utilization" {
     description = "The cpu utilization"
-    default     = 0.05
+    default     = 0.5
 }
 
+variable "health_check_timeout_sec" {
+    description = "The health check timeout in seconds"
+    default     = 30
+}
+
+variable "auto_healing_delay_sec" {
+    description = "The auto healing delay in seconds"
+    default     = 180
+}
+
+variable "cooldown_period" {
+    description = "The cooldown period"
+    default     = 100
+}
 
 
 resource "google_compute_managed_ssl_certificate" "default" {
@@ -159,7 +173,6 @@ resource "google_compute_managed_ssl_certificate" "default" {
 resource "google_compute_global_address" "default" {
   project = var.project_id
   name       = "lb-ipv4-1"
-  
   ip_version = var.ip_version
 }
 
@@ -169,8 +182,9 @@ resource "google_compute_health_check" "default" {
   check_interval_sec = var.check_interval_sec
   healthy_threshold  = var.healthy_threshold
   http_health_check {
-    port_name          = var.port_name
-    port_specification = var.port_specification
+    # port_name          = var.port_name
+    # port_specification = var.port_specification
+    port               = var.port
     request_path       = var.request_path
     # proxy_header       = var.proxy_header
     # response           = var.response
@@ -179,7 +193,7 @@ resource "google_compute_health_check" "default" {
   log_config {
     enable     = var.log_config_enable
   }
-  timeout_sec         = 5
+  timeout_sec         = var.health_check_timeout_sec
   unhealthy_threshold = 2
 }
 
@@ -197,11 +211,14 @@ resource "google_compute_region_instance_group_manager" "default" {
     instance_template = google_compute_region_instance_template.default.self_link
     name = "primary"
   }
+  auto_healing_policies {
+    health_check = google_compute_health_check.default.self_link
+    initial_delay_sec = var.auto_healing_delay_sec
+  }
 }
 
 resource "google_compute_backend_service" "default" {
   project                         = var.project_id
-  
   name                            = var.backend_service_name
   connection_draining_timeout_sec = 0
   health_checks                   = [google_compute_health_check.default.self_link]
@@ -256,6 +273,7 @@ resource "google_compute_region_autoscaler" "autoscaler" {
   autoscaling_policy {
     min_replicas = var.min_replicas
     max_replicas = var.max_replicas
+    cooldown_period = var.cooldown_period
     cpu_utilization {
       target = var.cpu_utilization
     }
@@ -273,27 +291,7 @@ resource "google_dns_record_set" "webapp" {
 }
 
 
-# resource "google_compute_health_check" "https-health-check" {
-#   name        = var.health_check_name
-#   description = "Health check via https for web app"
-#   project = var.project_id
-#   timeout_sec         = var.timeout_sec
-#   check_interval_sec  = var.check_interval_sec
-#   healthy_threshold   = var.healthy_threshold
-#   unhealthy_threshold = var.unhealthy_threshold
 
-#   http_health_check {
-#     port_name          = var.port_name
-#     port_specification = var.port_specification
-#     request_path       = var.request_path
-#     proxy_header       = var.proxy_header
-#     response           = var.response
-#   }
-
-#   log_config {
-#     enable     = var.log_config_enable
-#   }
-# }
 
 
 
