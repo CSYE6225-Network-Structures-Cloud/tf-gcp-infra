@@ -41,16 +41,16 @@ resource "google_compute_firewall" "deny_ssh_rule" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-# Block database access
-resource "google_compute_firewall" "deny_db_access" {
-  name     = "deny-db-access"
-  network  = module.vpc.network_self_link
-  project  = var.project_id
-  direction = "EGRESS"
+# # Block database access
+# resource "google_compute_firewall" "deny_db_access" {
+#   name     = "deny-db-access"
+#   network  = module.vpc.network_self_link
+#   project  = var.project_id
+#   direction = "EGRESS"
 
-  deny {
-    protocol = "tcp"
-    ports    = ["5432"]
-  }
-  destination_ranges = ["0.0.0.0/0"]
-}
+#   deny {
+#     protocol = "tcp"
+#     ports    = ["5432"]
+#   }
+#   destination_ranges = ["0.0.0.0/0"]
+# }
