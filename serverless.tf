@@ -56,6 +56,23 @@ variable "timeout_seconds" {
   default     = 60
 }
 
+variable "mailgun_api_key" {
+  description = "The mailgun api key"
+  type        = string
+}
+
+variable "domain_name_for_lambda" {
+  description = "Domain Name Without dot"
+  type        = string
+  default = "snehilaryan32.store"
+}
+
+variable "prefix_for_link" {
+  description = "The prefix for the link"
+  type        = string
+  default     = "https"
+}
+
 #####################################Pub/Sub##################################################################
 resource "google_pubsub_topic" "verify_topic" {
   name = var.pubsub_topic_name
@@ -154,10 +171,12 @@ resource "google_cloudfunctions2_function" "function" {
       DB_NAME=var.db_name
       DB_USER=var.db_user
       DB_PASSWORD=random_password.password.result
-      domain_name=var.domain_name
+      DOMAIN_NAME=var.domain_name_for_lambda
+      WEBAPP_PORT=443
+      PROTOCOL=var.prefix_for_link
+      MAIL_GUN_API_KEY=var.mailgun_api_key
     }
   }
-
 }
 
 
