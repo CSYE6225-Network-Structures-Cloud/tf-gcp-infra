@@ -65,6 +65,12 @@ variable "private_ip_address_name" {
   default     = "private-ip"
 }
 
+variable "max_connections" {
+  description = "The maximum number of connections"
+  type        = number
+  default     = 100
+}
+
 
 resource "google_compute_global_address" "private_ip_address" {
   project = var.project_id
@@ -107,6 +113,10 @@ resource "google_sql_database_instance" "instance" {
       #   name = "private-ip-address"
       #   value = "35.209.255.148"
       # }
+    }
+    database_flags {
+      name  = "max_connections"
+      value = var.max_connections
     }
   }
 }

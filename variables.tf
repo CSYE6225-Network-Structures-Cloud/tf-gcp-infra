@@ -19,7 +19,7 @@ variable "zone" {
 variable "boot_image" {
   description = "Name of the image"
   type        = string
-  default     = "flask-app" 
+  default     = "flask-app-new" 
 }
 
 variable "boot_disk_size" {

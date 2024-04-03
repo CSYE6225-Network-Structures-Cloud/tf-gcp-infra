@@ -159,6 +159,7 @@ resource "google_compute_managed_ssl_certificate" "default" {
 resource "google_compute_global_address" "default" {
   project = var.project_id
   name       = "lb-ipv4-1"
+  
   ip_version = var.ip_version
 }
 
@@ -174,8 +175,28 @@ resource "google_compute_health_check" "default" {
     # proxy_header       = var.proxy_header
     # response           = var.response
   }
+
+  log_config {
+    enable     = var.log_config_enable
+  }
   timeout_sec         = 5
   unhealthy_threshold = 2
+}
+
+resource "google_compute_region_instance_group_manager" "default" {
+  project = var.project_id
+  name               = var.instance_manager_name 
+  region             = var.region
+  base_instance_name = var.base_instance_name
+
+  named_port {
+    name = var.port_name
+    port = var.port
+  }
+  version {
+    instance_template = google_compute_region_instance_template.default.self_link
+    name = "primary"
+  }
 }
 
 resource "google_compute_backend_service" "default" {
@@ -225,21 +246,7 @@ resource "google_compute_global_forwarding_rule" "default" {
   ip_address            = google_compute_global_address.default.id
 }
 
-resource "google_compute_region_instance_group_manager" "default" {
-  project = var.project_id
-  name               = var.instance_manager_name 
-  region             = var.region
-  base_instance_name = var.base_instance_name
 
-  named_port {
-    name = var.port_name
-    port = var.port
-  }
-  version {
-    instance_template = google_compute_region_instance_template.default.self_link
-    name = "primary"
-  }
-}
 
 resource "google_compute_region_autoscaler" "autoscaler" {
   project     = var.project_id
