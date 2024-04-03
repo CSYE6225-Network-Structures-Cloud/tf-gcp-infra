@@ -4,7 +4,6 @@ variable "db_instance_name" {
   default     = "webapp-db"
 }
 
-
 variable "database_version" {
   description = "The database version to use"
   type        = string
