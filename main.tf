@@ -55,7 +55,7 @@ resource "google_project_iam_binding" "pubsub_publisher" {
 }
 
 ###############################################################Compute Instance Template##################################################################
-resource "google_compute_instance_template" "default" {
+resource "google_compute_region_instance_template" "default" {
   name_prefix  = var.machine_name
   machine_type = var.machine_type
   project      = var.project_id
