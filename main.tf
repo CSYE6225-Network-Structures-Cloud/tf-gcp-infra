@@ -83,7 +83,6 @@ resource "google_compute_region_instance_template" "default" {
   }
 
   tags = ["webapp"]
-
   metadata_startup_script = <<EOF
   #!/bin/bash
   touch ${local.env_file_path}

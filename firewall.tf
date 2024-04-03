@@ -1,19 +1,18 @@
-#Allow ingress http port for api
 resource "google_compute_firewall" "allow_ingrss_flask_port" {
   name    = "allow-ingress-flask-port"
   network = module.vpc.network_self_link
   project = var.project_id
-  
+  priority = 999
+  direction = "INGRESS"
   allow {
     protocol = "tcp"
     ports    = var.allowed_ingress_ports
   }
-
-  source_ranges = ["0.0.0.0/0"]
+  source_ranges = [google_compute_global_forwarding_rule.default.ip_address, "130.211.0.0/22", "35.191.0.0/16"]
   target_tags = ["webapp"]
 }
 
-#Allow egress to webapp servers, priority is set to 999 to ensure it overrides the deny egress to db rule 
+# Allow db only for webapp servers
 resource "google_compute_firewall" "allow_egress_webapp" {
   name    = "allow-egress-webapp"
   network = module.vpc.network_self_link
@@ -24,7 +23,6 @@ resource "google_compute_firewall" "allow_egress_webapp" {
   allow {
     protocol = var.allowed_egress_protocol
   }
-
   destination_ranges = ["0.0.0.0/0"]
   target_tags = ["webapp"]
 }
@@ -43,14 +41,14 @@ resource "google_compute_firewall" "deny_ssh_rule" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-# Deny egress to db instance by default for all the instances in the network
+# Block database access
 resource "google_compute_firewall" "deny_db_access" {
   name     = "deny-db-access"
   network  = module.vpc.network_self_link
   project  = var.project_id
   direction = "EGRESS"
 
-  allow {
+  deny {
     protocol = "tcp"
     ports    = ["5432"]
   }
