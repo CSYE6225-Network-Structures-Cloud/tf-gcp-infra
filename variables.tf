@@ -74,7 +74,7 @@ variable "region" {
 variable "vpc_name" {
   description = "The name of the VPC"
   type        = string
-  default     = "app-vpc-latest"
+  default     = "app-vpc-assignment8"
 }
 
 variable "routing_mode" {

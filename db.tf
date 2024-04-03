@@ -5,7 +5,6 @@ variable "db_instance_name" {
 }
 
 
-
 variable "database_version" {
   description = "The database version to use"
   type        = string
