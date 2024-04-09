@@ -54,6 +54,21 @@ resource "google_project_iam_binding" "pubsub_publisher" {
   ]
 }
 
+###############################################################Compute KMS permissions####################################################################
+data "google_compute_default_service_account" "default" {
+  project = var.project_id
+}
+
+resource "google_kms_crypto_key_iam_binding" "crypto_key" {
+  crypto_key_id = "${google_kms_crypto_key.server-key.id}"
+  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
+
+  members = [
+    "serviceAccount:${data.google_compute_default_service_account.default.email}",
+    "serviceAccount:${google_service_account.service_account.email}"
+  ]
+}
+
 ###############################################################Compute Instance Template##################################################################
 resource "google_compute_region_instance_template" "default" {
   name_prefix  = var.machine_name
@@ -67,6 +82,10 @@ resource "google_compute_region_instance_template" "default" {
     boot         = true
     disk_size_gb = var.boot_disk_size
     disk_type    = var.boot_disk_type
+
+    # disk_encryption_key {
+    #   kms_key_self_link = google_kms_crypto_key.server-key.id
+    # }
   }
 
   network_interface {
@@ -101,6 +120,59 @@ resource "google_compute_region_instance_template" "default" {
   sudo systemctl restart flaskapp
   EOF
 }
+
+
+# resource "google_compute_region_instance_template" "default2" {
+#   name_prefix  = var.machine_name
+#   machine_type = var.machine_type
+#   project      = var.project_id
+#   region       = var.region
+
+#   disk {
+#     source_image = var.boot_image
+#     auto_delete  = var.auto_delete_boot_disk
+#     boot         = true
+#     disk_size_gb = var.boot_disk_size
+#     disk_type    = var.boot_disk_type
+
+#     # disk_encryption_key {
+#     #   kms_key_self_link = google_kms_crypto_key.server-key.id
+#     # }
+#   }
+
+#   network_interface {
+#     network = module.vpc.network_self_link
+#     subnetwork = module.vpc.subnet_self_link
+#     access_config {
+#       network_tier = var.network_tier
+#     }
+#   }
+
+#   service_account {
+#     email  = google_service_account.service_account.email
+#     scopes = var.scopes
+#   }
+
+#   tags = ["webapp"]
+#   metadata_startup_script = <<EOF
+#   #!/bin/bash
+#   touch ${local.env_file_path}
+#   echo "DB_HOST=${local.db_host}" >> ${local.env_file_path}
+#   echo "DB_PORT=5432" >> ${local.env_file_path}
+#   echo "DB_NAME=${var.db_name}" >> ${local.env_file_path}
+#   echo "DB_USER=${var.db_user}" >> ${local.env_file_path}
+#   echo "DB_PASSWORD=${random_password.password.result}" >> ${local.env_file_path}
+#   echo "LOG_FILE_PATH=${var.log_file_path}" >> ${local.env_file_path}
+#   echo "PROJECT_ID=${var.project_id}" >> ${local.env_file_path}
+#   echo "PUBSUB_TOPIC_ID=${var.pubsub_topic_name}" >> ${local.env_file_path}
+#   echo "ENVIRONMENT=${var.app_env}" >> ${local.env_file_path}
+#   sudo chown csye6225:csye6225 /home/packer/flaskapp.env
+#   sudo chmod 644 /home/packer/flaskapp.env
+#   sudo systemctl daemon-reload
+#   sudo systemctl restart flaskapp
+#   EOF
+# }
+
 
 
 

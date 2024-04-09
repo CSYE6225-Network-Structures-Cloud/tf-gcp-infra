@@ -132,7 +132,7 @@ variable "capacity_scaler" {
 
 variable "min_replicas" {
     description = "The minimum number of replicas"
-    default     = 1
+    default     = 3
 }
 
 variable "max_replicas" {
@@ -142,7 +142,7 @@ variable "max_replicas" {
 
 variable "cpu_utilization" {
     description = "The cpu utilization"
-    default     = 0.5
+    default     = 0.05
 }
 
 variable "health_check_timeout_sec" {
