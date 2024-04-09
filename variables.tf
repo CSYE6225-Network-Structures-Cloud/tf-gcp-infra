@@ -25,7 +25,7 @@ variable "boot_image" {
 variable "boot_disk_size" {
   description = "Size of the boot disk"
   type        = string
-  default     = 100
+  default     = 20
 }
 
 variable "boot_disk_type" {

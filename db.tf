@@ -139,6 +139,35 @@ resource "google_sql_user" "user" {
 }
 
 
+#####################################################################Secrets to be pulled by actions#####################################################
+resource "google_secret_manager_secret" "db_private_ip" {
+  secret_id = "db-private-ip"
+  project = var.project_id
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "db_private_ip_version" {
+  secret = google_secret_manager_secret.db_private_ip.id
+  secret_data = google_sql_database_instance.instance.ip_address[0]["ip_address"]
+}
+
+
+resource "google_secret_manager_secret" "db_password" {
+  secret_id = "db-password"
+  project = var.project_id
+  replication {
+    auto {}
+  }
+}
+resource "google_secret_manager_secret_version" "db_password_version" {
+  secret = google_secret_manager_secret.db_password.id
+  secret_data = random_password.password.result
+}
+
+
+
+
 output "db_host" {
   value = google_sql_database_instance.instance.ip_address[0]
   description = "The IP address of the database host."

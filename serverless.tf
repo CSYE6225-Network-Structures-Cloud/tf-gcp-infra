@@ -73,6 +73,12 @@ variable "prefix_for_link" {
   default     = "https"
 }
 
+variable "bucket_name_suffix" {
+  description = "The name of the bucket"
+  type        = string
+  default     = "gcf-source"
+}
+
 #####################################Pub/Sub##################################################################
 resource "google_pubsub_topic" "verify_topic" {
   name = var.pubsub_topic_name
@@ -82,12 +88,12 @@ resource "google_pubsub_topic" "verify_topic" {
 
 
 #####################################Cloud Function Source Bucket#############################################
-resource "google_storage_bucket" "lambda_source_bucket" {
-  name     = "${var.project_id}-gcf-source"  # Every bucket name must be globally unique
-  location = "US"
-  project = var.project_id
-  uniform_bucket_level_access = true
-}
+# resource "google_storage_bucket" "lambda_source_bucket" {
+#   name     = "${var.project_id}-${var.bucket_name_suffix}"  # Every bucket name must be globally unique
+#   location = "US"
+#   project = var.project_id
+#   uniform_bucket_level_access = true
+# }
 
 # resource "google_storage_bucket_object" "lambda_source_object" {
 #   name   = "function-source.zip"
@@ -148,7 +154,7 @@ resource "google_cloudfunctions2_function" "function" {
     entry_point = var.entry_point_function
     source {
       storage_source {
-        bucket = google_storage_bucket.lambda_source_bucket.name
+        bucket = "${var.project_id}-${var.bucket_name_suffix}"
         object = "function-source.zip"
       }
     }

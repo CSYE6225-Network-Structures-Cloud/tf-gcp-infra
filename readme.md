@@ -23,3 +23,6 @@ gcloud services list --enabled --project csye6225-414117
 ```
 terraform destroy -target=module.vpc
 ```
+
+gcloud kms keyrings create key_ring_webapp \
+--location us-central1
