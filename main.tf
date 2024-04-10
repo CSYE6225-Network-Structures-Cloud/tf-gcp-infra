@@ -55,19 +55,11 @@ resource "google_project_iam_binding" "pubsub_publisher" {
 }
 
 ###############################################################Compute KMS permissions####################################################################
-data "google_compute_default_service_account" "default" {
-  project = var.project_id
-}
+# data "google_compute_default_service_account" "default" {
+#   project = var.project_id
+# }
 
-resource "google_kms_crypto_key_iam_binding" "crypto_key" {
-  crypto_key_id = "${google_kms_crypto_key.server-key.id}"
-  role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
-  members = [
-    "serviceAccount:${data.google_compute_default_service_account.default.email}",
-    "serviceAccount:${google_service_account.service_account.email}"
-  ]
-}
 
 ###############################################################Compute Instance Template##################################################################
 resource "google_compute_region_instance_template" "default" {
@@ -75,6 +67,7 @@ resource "google_compute_region_instance_template" "default" {
   machine_type = var.machine_type
   project      = var.project_id
   region       = var.region
+  depends_on = [google_kms_crypto_key_iam_binding.crypto_key]
 
   disk {
     source_image = var.boot_image
@@ -83,9 +76,9 @@ resource "google_compute_region_instance_template" "default" {
     disk_size_gb = var.boot_disk_size
     disk_type    = var.boot_disk_type
 
-    # disk_encryption_key {
-    #   kms_key_self_link = google_kms_crypto_key.server-key.id
-    # }
+    disk_encryption_key {
+      kms_key_self_link = google_kms_crypto_key.server-key.id
+    }
   }
 
   network_interface {
