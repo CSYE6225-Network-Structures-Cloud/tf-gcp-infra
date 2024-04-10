@@ -132,12 +132,12 @@ variable "capacity_scaler" {
 
 variable "min_replicas" {
     description = "The minimum number of replicas"
-    default     = 3
+    default     = 1
 }
 
 variable "max_replicas" {
     description = "The maximum number of replicas"
-    default     = 6
+    default     = 3
 }
 
 variable "cpu_utilization" {

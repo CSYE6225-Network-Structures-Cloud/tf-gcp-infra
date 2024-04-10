@@ -34,11 +34,11 @@ variable "boot_disk_type" {
   default     = "pd-balanced"
 }
 
-variable "network" {
-  description = "Name of the network"
-  type        = string
-  default     = "app-vpc-assignment7"
-}
+# variable "network" {
+#   description = "Name of the network"
+#   type        = string
+#   default     = "app-vpc-assignment7"
+# }
 
 variable "gce_subnet" {
   description = "Name of the subnet"
@@ -64,6 +64,12 @@ variable "project_id" {
   default     = "csye6225-414117"
 }
 
+variable "project_number" {
+  description = "Number of the project"
+  type        = string
+  default     = "712481690114"
+}
+
 variable "region" {
   description = "The region where the subnet will be created"
   type        = string
@@ -74,7 +80,7 @@ variable "region" {
 variable "vpc_name" {
   description = "The name of the VPC"
   type        = string
-  default     = "app-vpc-assignment8"
+  default     = "app-vpc-assignment9"
 }
 
 variable "routing_mode" {

@@ -92,14 +92,14 @@ resource "google_service_networking_connection" "private_vpc_connection" {
 #   webapp_ip = google_compute_instance.default.network_interface.0.access_config.0.assigned_nat_ip
 # }
 
-
 resource "google_sql_database_instance" "instance" {
   name                = var.db_instance_name
   region              = var.region
   database_version    = var.database_version
   deletion_protection = var.deletion_protection_db
   project             = var.project_id  
-  depends_on = [ google_service_networking_connection.private_vpc_connection ]
+  depends_on = [ google_service_networking_connection.private_vpc_connection, google_kms_crypto_key_iam_binding.crypto_key_sql]
+  encryption_key_name = google_kms_crypto_key.sql-key.id
   settings {
     tier              = var.tier_db
     availability_type = var.availability_type_db
@@ -164,8 +164,6 @@ resource "google_secret_manager_secret_version" "db_password_version" {
   secret = google_secret_manager_secret.db_password.id
   secret_data = random_password.password.result
 }
-
-
 
 
 output "db_host" {
