@@ -88,18 +88,23 @@ resource "google_pubsub_topic" "verify_topic" {
 
 
 #####################################Cloud Function Source Bucket#############################################
-# resource "google_storage_bucket" "lambda_source_bucket" {
-#   name     = "${var.project_id}-${var.bucket_name_suffix}"  # Every bucket name must be globally unique
-#   location = "US"
-#   project = var.project_id
-#   uniform_bucket_level_access = true
-# }
+ resource "google_storage_bucket" "lambda_source_bucket" {
+   name     = "${var.project_id}-${var.bucket_name_suffix}"  # Every bucket name must be globally unique
+   location = var.region
+   storage_class = "REGIONAL"
+   project = var.project_id
+   uniform_bucket_level_access = true
+   depends_on = [ google_kms_crypto_key_iam_binding.crypto_key_bucket ]
+   encryption {
+    default_kms_key_name = google_kms_crypto_key.bucket-key.id  
+   }
+ }
 
-# resource "google_storage_bucket_object" "lambda_source_object" {
-#   name   = "function-source.zip"
-#   bucket = google_storage_bucket.lambda_source_bucket.name
-#   source = "function-source.zip"  # Add path to the zipped function source code
-# }
+ resource "google_storage_bucket_object" "lambda_source_object" {
+   name   = "function-source.zip"
+   bucket = google_storage_bucket.lambda_source_bucket.name
+   source = "function-source.zip"  # Add path to the zipped function source code
+ }
 
 
 ###################################Service account and bindings###############################################
