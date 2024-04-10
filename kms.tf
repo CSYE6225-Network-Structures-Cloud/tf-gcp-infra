@@ -1,13 +1,19 @@
 variable "key_ring_name" {
   description = "The id of the key ring created using cli"
   type        = string
-  default     = "key_ring_webapp_new"
+  default     = "key_ring_webapp_new-2024-04-10T05-14-12Z"
 }
 
 variable "rotation_period" {
   description = "The rotation period of the key"
   type        = string
   default     = "2592000s"
+}
+
+variable "storge_svc_account" {
+  description = "The storage service account"
+  type        = string
+  default     = "service-712481690114@gs-project-accounts.iam.gserviceaccount.com"
 }
 
 # data "google_kms_key_ring" "my_key_ring" {
@@ -17,7 +23,7 @@ variable "rotation_period" {
 # }
 
 resource "google_kms_key_ring" "key_ring" {
-  name     = "key_ring_webapp_new-2024-04-10T05-14-12Z"
+  name     = var.key_ring_name
   project  = var.project_id
   location = var.region
 }
@@ -75,9 +81,10 @@ resource "google_kms_crypto_key_iam_binding" "crypto_key_bucket" {
   role          = "roles/cloudkms.cryptoKeyEncrypterDecrypter"
 
   members = [
-    "serviceAccount:service-${var.project_number}@gs-project-accounts.iam.gserviceaccount.com"
+    "serviceAccount:${var.storge_svc_account}"
   ]
 }
+
 
 #############################Create Secrets To be accessed by the GitHub Actions for deployment############################################
 resource "google_secret_manager_secret" "server-key" {

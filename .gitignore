@@ -36,3 +36,4 @@ terraform.rc
 # State files and state file backups
 .terraform.lock.hcl
 
+*.zip*
