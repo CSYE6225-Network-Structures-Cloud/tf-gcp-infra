@@ -73,6 +73,12 @@ variable "prefix_for_link" {
   default     = "https"
 }
 
+variable "endpoint_env" {
+  description = "value of the endpoint"
+  type        = string
+  default = "verify-email"  
+}
+
 variable "bucket_name_suffix" {
   description = "The name of the bucket"
   type        = string
@@ -186,6 +192,7 @@ resource "google_cloudfunctions2_function" "function" {
       WEBAPP_PORT=443
       PROTOCOL=var.prefix_for_link
       MAIL_GUN_API_KEY=var.mailgun_api_key
+      ENDPOINT=var.endpoint_env
     }
   }
 }
