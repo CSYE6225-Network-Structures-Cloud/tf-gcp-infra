@@ -33,7 +33,7 @@ resource "google_compute_firewall" "deny_ssh_rule" {
   network = module.vpc.network_self_link
   project = var.project_id 
   
-  allow {
+  deny {
     protocol = "tcp"
     ports    = ["22"]
   }
